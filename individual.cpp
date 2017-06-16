@@ -14,7 +14,7 @@ Individual::Individual() {
 		ifstream file;
 
 		try {
-			file.open("dermatology.data", ifstream::in);
+			file.open("dermatology.train");	//, ifstream::in);
 
 			// for (int i = 0; i < 366; i++) {
 			while ( file.good() ) {
@@ -43,6 +43,7 @@ Individual::Individual() {
 }
 
 Individual::Individual(int clas) {
+	/*
 	for (int i = 0; i < 34; i++)
 		genes[i].weight = double(i + i) / 100.;
 
@@ -147,6 +148,7 @@ Individual::Individual(int clas) {
 
 		default: break;
 	}
+	*/
 
 	/*for (int i = 0; i < 34; i++)
 		clog << "Gene " << i << ":\t" << genes[i].weight << '\t' << genes[i].op << '\t' << genes[i].value << endl;
@@ -154,8 +156,10 @@ Individual::Individual(int clas) {
 }
 
 void Individual::shuffle(Random& random) {
+	static Distribution zero_to_one = Distribution(0, 1);
+
 	for (int i = 0; i < 34; i++) {
-		genes[i].weight = double(random() % 11) / 10;
+		genes[i].weight = zero_to_one(random);	 // double(random() % 11) / 10;
 		genes[i].op = Operator(random() % N_OPERATORS);
 		genes[i].value = random() % 4;
 	}
@@ -279,4 +283,138 @@ bool Individual::operator==(const Individual& other) {
 				 this->genes[i].value == other.genes[i].value;
 
 	return result;
+}
+
+void Individual::getRegra(){
+	for (size_t i = 0; i < 34; i++) {
+		if(genes[i].weight > 0.7){
+			switch (i){
+				case 0:
+					std::cout <<  "erythema";
+					break;
+				case 1:
+					std::cout <<  "scaling";
+					break;
+				case 2:
+					std::cout <<  "definite borders";
+					break;
+				case 3:
+					std::cout << "itching";
+					break;
+				case 4:
+					std::cout <<  "koebner phenomenon";
+					break;
+				case 5:
+					std::cout <<  "polygonal papules";
+					break;
+				case 6:
+					std::cout <<  "follicular papules";
+					break;
+				case 7:
+					std::cout <<  "oral mucosal involvement";
+					break;
+				case 8:
+					std::cout <<  "knee and elbow involvement";
+					break;
+				case 9:
+					std::cout <<  "scalp involvement";
+					break;
+				case 10:
+					std::cout <<  "family history, (0 or 1)";
+					break;
+				case 11:
+					std::cout <<  "melanin incontinence";
+					break;
+				case 12:
+					std::cout <<  "eosinophils in the infiltrate";
+					break;
+				case 13:
+					std::cout <<  "PNL infiltrate";
+					break;
+				case 14:
+					std::cout <<  "fibrosis of the papillary dermis";
+					break;
+				case 15:
+					std::cout <<  "exocytosis";
+					break;
+				case 16:
+					std::cout <<  "acanthosis";
+					break;
+				case 17:
+					std::cout <<  "hyperkeratosis";
+					break;
+				case 18:
+					std::cout <<  "parakeratosis";
+					break;
+				case 19:
+					std::cout <<  "clubbing of the rete ridges";
+					break;
+				case 20:
+					std::cout <<  "elongation of the rete ridges";
+					break;
+				case 21:
+					std::cout <<  "thinning of the suprapapillary epidermis";
+					break;
+				case 22:
+					std::cout <<  "spongiform pustule";
+					break;
+				case 23:
+					std::cout <<  "munro microabcess";
+					break;
+				case 24:
+					std::cout <<  "focal hypergranulosis";
+					break;
+				case 25:
+					std::cout <<  "disappearance of the granular layer";
+					break;
+				case 26:
+					std::cout <<  "vacuolisation and damage of basal layer";
+					break;
+				case 27:
+					std::cout <<  "spongiosis";
+					break;
+				case 28:
+					std::cout <<  "saw-tooth appearance of retes";
+					break;
+				case 29:
+					std::cout <<  "follicular horn plug";
+					break;
+				case 30:
+					std::cout <<  "perifollicular parakeratosis";
+					break;
+				case 31:
+					std::cout <<  "inflammatory monoluclear inflitrate";
+					break;
+				case 32:
+					std::cout <<  "band-like infiltrate";
+					break;
+				case 33:
+					std::cout <<  "Age (linear)";
+					break;
+			}
+
+			switch (genes[i].op) {
+				case EQUAL:
+					std::cout << " = ";
+					break;
+
+				case DIFFERENT:
+					std::cout << " != ";
+					break;
+
+				case LESS:
+					std::cout << " < ";
+					break;
+
+				case GREATEREQUAL:
+					std::cout << " >= ";
+					break;
+
+				default: break;
+			}
+
+			std::cout << genes[i].value << '\n';
+		}
+	}
+
 }

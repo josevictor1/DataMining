@@ -6,6 +6,7 @@
 
 #define DEFAULT_FITNESS -1.0
 
+using Distribution = std::uniform_real_distribution<double>;
 using Random = std::default_random_engine;
 
 struct Patient {
@@ -28,4 +29,5 @@ public:
 	Gene getGene(int position);
 	void swapGene(Individual& other, int gene_i);
 	bool operator==(const Individual& other);
+	void getRegra();
 };

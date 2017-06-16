@@ -5,7 +5,6 @@
 #define HELP 1E-3
 
 using namespace std;
-using Distribution = uniform_real_distribution<double>;
 
 Population::Population() {}
 void Population::generate(){
@@ -30,7 +29,7 @@ void Population::select() {
     // bool repeated;
     double total = 0, sum = 0;
     // std::vector<Individual> result;
-    Random r;
+    // Random r;
     for (size_t i = 0; i < POPULATION_SIZE; i++) {
         total += individuals[i].getFitness() + HELP;
     }
@@ -111,8 +110,6 @@ void Population::crossover() {  // (std::vector<Individual> parents) {
             if (j >= p1 and j <= p2)
                 individuals[i].swapGene(individuals[i + 1], j);
         }
-        individuals[i].calcFitness(clas);
-        individuals[i+1].calcFitness(clas);
         /*clog << "After" << endl;
         for (size_t j = 0; j < 34; j++) {
             std::clog << fixed << individuals[i].getGene(j).weight << ' ';
@@ -124,6 +121,8 @@ void Population::crossover() {  // (std::vector<Individual> parents) {
         //mutação conferida ... resultados no arquivo
         mutate(i);
         mutate(i+1);
+        individuals[i].calcFitness(clas);
+        individuals[i+1].calcFitness(clas);
 
         /*clog << "\nAfter with mutation" << endl;
         for (size_t j = 0; j < 34; j++) {
@@ -150,11 +149,11 @@ void Population::crossover() {  // (std::vector<Individual> parents) {
 
 
 void Population::mutate(int n){
-    Distribution roulette = Distribution(0, 1);
+    static Distribution delta = Distribution(-0.1, 0.1);
     Gene aux;
     for (size_t j = 0; j < 34; j++) {
-        if(random()%100 <= 30){
-            float value = roulette(random);
+        if(random()%100 < 30){
+            /*double value = delta(random);
             if(individuals[n].getGene(j).weight < value){
                 aux = individuals[n].getGene(j);
                 aux.weight = aux.weight + value;
@@ -165,21 +164,39 @@ void Population::mutate(int n){
                 aux = individuals[n].getGene(j);
                 aux.weight = aux.weight - value;
                 individuals[n].setGene(j,aux);
-            }
+            }*/
+            double value = delta(random);
+            aux = individuals[n].getGene(j);
+            aux.weight += value;
+            individuals[n].setGene(j,aux);
         }
-        if(random()%100 <= 30){
+        if(random()%100 < 30){
             aux = individuals[n].getGene(j);
             aux.op = Operator(random()%N_OPERATORS);
             individuals[n].setGene(j,aux);
         }
-        if(random()%100 <= 30){
+        if(random()%100 < 30){
             aux = individuals[n].getGene(j);
-            aux.value = random()%4;
+
+            switch (j) {
+                case 10:
+                    aux.value = random() % 2;
+                    break;
+
+                case 33:
+                    aux.value = random() % 80;
+                    break;
+
+                default:
+                    aux.value = random()%4;
+                    break;
+            }
+
             individuals[n].setGene(j,aux);
         }
     }
 
-    individuals[n].calcFitness(clas);
+    // individuals[n].calcFitness(clas);
 }
 
 /*
@@ -220,8 +237,8 @@ void Population::mutate() {
 void Population::reinsert() {
 
     for (size_t i = 1; i < POPULATION_SIZE; i++) {
-        std::cout << " primeiro"<<individuals[0].getFitness() <<'\n';
-        if(individuals[0].getFitness() < individuals[i].getFitness()){
+        //std::cout << " primeiro"<<individuals[0].getFitness() <<'\n';
+        if(individuals[i].getFitness() > individuals[0].getFitness()){
             individuals[0] = individuals[i];
         }
         individuals[i] = individuals[i+POPULATION_SIZE];
